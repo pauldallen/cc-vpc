@@ -167,13 +167,13 @@ variables:
         description: the name of the VPC
         default: nat-test-vpc
         overrides:
-            - "STACK_SERVERS_NAT::VPC_NAME"
+            - "stack-servers-nat::VPC_NAME"
     VPN_VPC_NAME:
         required: true
         description: the name of the VPC
         default: vpn-test-vpc
         overrides:
-            - "STACK_SERVERS_VPN::VPC_NAME"
+            - "stack-servers-vpn::VPC_NAME"
     NAT_AMI:
         description: the ami id of the nat
         switch: "INSTANCE::region"
