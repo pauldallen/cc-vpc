@@ -7,12 +7,6 @@ variables:
         required: true
         description: the name to give to the private route
         default: test-private-route
-    VPN_PRIVATE_ROUTE_NAME:
-        required: true
-        description: the name to give to the private route
-        default: test-private-route-vpn
-        overrides:
-            - "stack-servers-vpn::VPC_NAME"
     PRIVATE_SUBNET_NAME:
         required: true
         description: the cloudcoreo name of the private vpc subnets
@@ -174,12 +168,6 @@ variables:
         default: nat-test-vpc
         overrides:
             - "stack-servers-nat::VPC_NAME"
-    VPN_VPC_NAME:
-        required: true
-        description: the name of the VPC
-        default: vpn-test-vpc
-        overrides:
-            - "stack-servers-vpn::VPC_NAME"
     NAT_AMI:
         description: the ami id of the nat
         switch: "INSTANCE::region"
