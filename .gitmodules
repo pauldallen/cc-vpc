@@ -4,3 +4,6 @@
 [submodule "stack-servers-nat/extends"]
 	path = stack-servers-nat/extends
 	url = git@github.com:CloudCoreo/servers-nat.git
+[submodule "stack-servers-vpn/extends"]
+	path = stack-servers-vpn/extends
+	url = git@github.com:CloudCoreo/servers-vpn.git
