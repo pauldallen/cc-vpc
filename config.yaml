@@ -3,6 +3,18 @@ variables:
         required: true
         description: the name of the VPC
         default: test-vpc
+    NAT_VPC_NAME:
+        required: true
+        description: the name of the VPC
+        default: test-vpc
+        overrides:
+            - STACK_SERVERS_NAT::VPC_NAME
+    VPN_VPC_NAME:
+        required: true
+        description: the name of the VPC
+        default: test-vpc
+        overrides:
+            - STACK_SERVERS_VPN::VPC_NAME
     VPC_OCTETS:
         required: true
         description: the /16 net of the VPC to look for - i.e 123.123.0.0
