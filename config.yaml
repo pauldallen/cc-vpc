@@ -11,60 +11,14 @@ variables:
         required: true
         description: the cloudcoreo name of the private vpc subnets
         default: test-private-subnet
-    NAT_SG_NAME:
-        required: true
-        description: the name of the security group to create for the NAT
-        default: NAT-sg
-    NAT_INGRESS_PORTS:
-        required: true
-        description: allowed ingress ports on the nat
-        default:
-            - 0..65535
-        type: array
-    NAT_INGRESS_CIDRS:
-        required: true
-        description: allowed ingress network cidrs on the nat
-        default:
-            - 0.0.0.0/0
-        type: array
-    NAT_EGRESS_PORTS:
-        required: true
-        description: allowed ingress ports on the nat
-        default:
-            - 0..65535
-        type: array
-    NAT_EGRESS_CIDRS:
-        required: true
-        description: allowed ingress network cidrs on the nat
-        default:
-            - 0.0.0.0/0
-        type: array
-    NAT_NAME:
-        required: true
-        description: the name of the nat instance
-        default: NAT
-    NAT_SIZE:
-        required: true
-        description: the instance size of the nat
-        default: t2.small
-    NAT_GROUP_SIZE_MIN:
-        required: true
-        description: the miniumum number of NAT instances to launch
-        default: 1
-        type: number
-    NAT_GROUP_SIZE_MAX:
-        required: true
-        description: the maximum number of NAT instances to launch
-        default: 1
-        type: number
-    PUBLIC_SUBNET_NAME:
-        required: true
-        description: the cloudcoreo name of the public vpc subnets
-        default: test-public-subnet
     PUBLIC_ROUTE_NAME:
         required: true
         description: the name to give to the public route
         default: test-public-route
+    PUBLIC_SUBNET_NAME:
+        required: true
+        description: the cloudcoreo name of the public vpc subnets
+        default: test-public-subnet
     BACKUP_BUCKET:
         default: cloudcoreo-backups
         description: the name of the bucket in which we should back things up
@@ -122,6 +76,52 @@ variables:
         overrides: null
         required: true
         type: null
+    NAT_SG_NAME:
+        required: true
+        description: the name of the security group to create for the NAT
+        default: NAT-sg
+    NAT_INGRESS_PORTS:
+        required: true
+        description: allowed ingress ports on the nat
+        default:
+            - 0..65535
+        type: array
+    NAT_INGRESS_CIDRS:
+        required: true
+        description: allowed ingress network cidrs on the nat
+        default:
+            - 0.0.0.0/0
+        type: array
+    NAT_EGRESS_PORTS:
+        required: true
+        description: allowed ingress ports on the nat
+        default:
+            - 0..65535
+        type: array
+    NAT_EGRESS_CIDRS:
+        required: true
+        description: allowed ingress network cidrs on the nat
+        default:
+            - 0.0.0.0/0
+        type: array
+    NAT_NAME:
+        required: true
+        description: the name of the nat instance
+        default: NAT
+    NAT_SIZE:
+        required: true
+        description: the instance size of the nat
+        default: t2.small
+    NAT_GROUP_SIZE_MIN:
+        required: true
+        description: the miniumum number of NAT instances to launch
+        default: 1
+        type: number
+    NAT_GROUP_SIZE_MAX:
+        required: true
+        description: the maximum number of NAT instances to launch
+        default: 1
+        type: number
     TIMEZONE:
         default: America/Chicago
         value: America/Chicago
@@ -129,6 +129,15 @@ variables:
         overrides: null
         required: true
         type: null
+    MONITORINTERVAL:
+        required: true
+        description: time in seconds between route checks
+        default: 20
+        type: number
+    PRIVATE_SUBNETS:
+        default: "STACK::coreo_aws_vpc_subnet.test-private-subnet.subnet_ids"
+        required: true
+        descripiton: comma seperated list of the private subnet ids
     VPN_BACKUP_CRON:
         default: "0 * * * *"
         description: the cron schedule for backups
@@ -153,21 +162,26 @@ variables:
         overrides: null
         required: true
         type: null
-    MONITORINTERVAL:
-        required: true
-        description: time in seconds between route checks
-        default: 20
-        type: number
-    PRIVATE_SUBNETS:
-        default: "STACK::coreo_aws_vpc_subnet.test-private-subnet.subnet_ids"
-        required: true
-        descripiton: comma seperated list of the private subnet ids
     NAT_VPC_NAME:
         required: true
         description: the name of the VPC
         default: nat-test-vpc
         overrides:
             - "stack-servers-nat::VPC_NAME"
+    VPN_AMI_ID:
+        description: the ami id of the vpn
+        switch: "INSTANCE::region"
+        cases:
+            us-east-1: ami-1ecae776
+            us-west-1: ami-d114f295
+            us-west-2: ami-e7527ed7
+            eu-west-1: ami-a10897d6
+            eu-central-1: ami-a8221fb5
+            ap-southeast-1: ami-68d8e93a
+            ap-northeast-1: ami-cbf90ecb
+            ap-southeast-2: ami-fd9cecc7
+            sa-east-1: ami-b52890a8
+        type: case
     NAT_AMI:
         description: the ami id of the nat
         switch: "INSTANCE::region"
@@ -186,33 +200,19 @@ variables:
         required: false
         description: The name of the key to use for the nat box
         default: ""
-    VPN_AMI_ID:
-        description: the ami id of the vpn
-        switch: "INSTANCE::region"
-        cases:
-            us-east-1: ami-1ecae776
-            us-west-1: ami-d114f295
-            us-west-2: ami-e7527ed7
-            eu-west-1: ami-a10897d6
-            eu-central-1: ami-a8221fb5
-            ap-southeast-1: ami-68d8e93a
-            ap-northeast-1: ami-cbf90ecb
-            ap-southeast-2: ami-fd9cecc7
-            sa-east-1: ami-b52890a8
-        type: case
     DATADOG_KEY:
         default: null
         value: null
         description: "If you have a datadog key, enter it here and we will install the agent"
         overrides: null
         required: false
+    LOGFILE:
+        required: false
+        description: ha-nat log file
+        default: /var/log/ha-nat.log
     VPN_ROUTING_CIDR:
         default: 10.0.0.0
         description: This is the cidr of the network cidr the VPN should on your network. i.e. all traffic to this cidr will be routed through the VPN. set to 0.0.0.0 for all traffic. This works in conjunction with the VPN_ROUTING_MASK variable.
     VPN_ROUTING_MASK:
         default: 8
         description: This is the cidr mask of the network cidr the VPN should on your network. i.e. all traffic to this cidr will be routed through the VPN. set to 0 for all traffic. This works in conjunction with the VPN_ROUTING_CIDR variable.
-    LOGFILE:
-        required: false
-        description: ha-nat log file
-        default: /var/log/ha-nat.log
