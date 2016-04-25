@@ -6,13 +6,13 @@ variables:
     NAT_VPC_NAME:
         required: true
         description: the name of the VPC
-        default: test-vpc
+        default: nat-test-vpc
         overrides:
             - STACK_SERVERS_NAT::VPC_NAME
     VPN_VPC_NAME:
         required: true
         description: the name of the VPC
-        default: test-vpc
+        default: vpn-test-vpc
         overrides:
             - STACK_SERVERS_VPN::VPC_NAME
     VPC_OCTETS:
