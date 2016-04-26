@@ -75,7 +75,7 @@ variables:
         required: true
         type: null
     VPN_SSH_KEY_NAME:
-        default: cloudcoreo-dev
+        default: macbook
         description: What key should the vpn instance be launched with?
         overrides: null
         required: true
@@ -197,7 +197,7 @@ variables:
     NAT_KEY:
         required: false
         description: The name of the key to use for the nat box
-        default: ""
+        default: macbook
     DATADOG_KEY:
         default: null
         value: null
